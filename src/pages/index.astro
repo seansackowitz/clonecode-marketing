@@ -1,0 +1,224 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const features = [
+  {
+    title: "Random or named clones",
+    body: "Run clonecode for a friendly two-word name (purple-elephant), or pass auth-refactor when the work has a name.",
+  },
+  {
+    title: "Branch-aware",
+    body: "-b feature/login: checkout existing remote branch, or create a fresh one off the default.",
+  },
+  {
+    title: "Per-repo config",
+    body: "Different target dirs, postClone commands, allowlists, and launchers for each repo.",
+  },
+  {
+    title: "Subcommands you actually use",
+    body: "list, rm (refuses to delete dirty clones), cd (reattach), config (interactive editor).",
+  },
+  {
+    title: "Safe by default",
+    body: "Failed clones clean themselves up. rm warns on uncommitted or unpushed work.",
+  },
+  {
+    title: "Bring any launcher",
+    body: "Default is claude. Override globally, per-repo, or per-invocation.",
+  },
+];
+---
+
+<Layout>
+  <main class="mx-auto max-w-5xl px-6 sm:px-8">
+    <nav class="flex items-center justify-between py-6">
+      <a href="/" class="flex items-center gap-2 font-mono text-sm">
+        <span class="acc">$</span>
+        <span class="font-semibold tracking-tight">clonecode</span>
+      </a>
+      <div class="flex items-center gap-3">
+        <a
+          href="https://github.com/seansackowitz/clonecode"
+          class="btn"
+          target="_blank"
+          rel="noopener"
+        >
+          GitHub
+        </a>
+      </div>
+    </nav>
+
+    <section class="pt-12 sm:pt-20 pb-20">
+      <p class="eyebrow">Parallel Claude Code, without the chaos</p>
+      <h1 class="mt-4 text-4xl sm:text-6xl font-semibold tracking-tight leading-tight">
+        One repo.
+        <span class="acc">Many agents.</span>
+        <br class="hidden sm:block" />
+        Zero collisions.
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg leading-relaxed text-dim">
+        <span class="font-mono">clonecode</span> spins up an isolated git clone of your
+        repo and launches
+        <a class="underline" href="https://claude.com/claude-code">Claude Code</a>
+        inside it — so several agents can work in parallel without stepping on
+        each other.
+      </p>
+
+      <div class="mt-10 flex flex-wrap items-center gap-3">
+        <a class="btn btn-primary" href="#install">▸ Install</a>
+        <a class="btn" href="#how-it-works">How it works</a>
+      </div>
+
+      <div class="mt-12 terminal" aria-hidden="true">
+        <div class="terminal-chrome">
+          <span class="terminal-dot"></span>
+          <span class="terminal-dot"></span>
+          <span class="terminal-dot"></span>
+          <span class="ml-3 font-mono text-xs text-faint">~/code/myrepo</span>
+        </div>
+        <pre class="terminal-body"><span class="prompt">$ </span><span class="cmd">clonecode auth-refactor</span>
+<span class="out">→ git clone git@github.com:acme/myrepo.git ~/projects/myrepo/auth-refactor</span>
+<span class="out">→ bun install</span>
+<span class="out">→ </span><span class="acc">claude</span><span class="out"> (cwd: ~/projects/myrepo/auth-refactor)</span>
+<span class="cursor"></span></pre>
+      </div>
+    </section>
+
+    <section class="py-16 border-t border-divide">
+      <p class="eyebrow">The problem</p>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight">
+        Two agents, one working tree.
+      </h2>
+      <div class="mt-6 grid gap-6 sm:grid-cols-2 text-dim leading-relaxed">
+        <p>
+          Run two Claude Code sessions in the same checkout and they fight every
+          edit — one stomps the other's changes, both lose context.
+        </p>
+        <p>
+          Worktrees help git, but agents read files independently, so the same
+          path with different contents in different worktrees gets confusing fast.
+          A full clone per task is heavier on disk but keeps every agent's view
+          clean.
+        </p>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="py-16 border-t border-divide">
+      <p class="eyebrow">How it works</p>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight">
+        Three steps. One command.
+      </h2>
+
+      <ol class="mt-10 grid gap-6 sm:grid-cols-3">
+        <li class="card">
+          <div class="font-mono text-xs acc">01 / clone</div>
+          <p class="mt-2 font-semibold">Fresh checkout</p>
+          <p class="mt-2 text-sm text-dim leading-relaxed">
+            <span class="font-mono">git clone</span> from the source repo's remote
+            into <span class="font-mono">&lt;targetDir&gt;/&lt;repo&gt;/&lt;name&gt;/</span>.
+            Submodules and LFS handled automatically.
+          </p>
+        </li>
+        <li class="card">
+          <div class="font-mono text-xs acc">02 / setup</div>
+          <p class="mt-2 font-semibold">Per-repo hooks</p>
+          <p class="mt-2 text-sm text-dim leading-relaxed">
+            Copy <span class="font-mono">.env</span> and other allowlisted files
+            from the source. Run a <span class="font-mono">postClone</span>
+            command — <span class="font-mono">bun install</span>, migrations,
+            anything.
+          </p>
+        </li>
+        <li class="card">
+          <div class="font-mono text-xs acc">03 / launch</div>
+          <p class="mt-2 font-semibold">chdir + exec</p>
+          <p class="mt-2 text-sm text-dim leading-relaxed">
+            Replace the process with <span class="font-mono">claude</span> in
+            the new clone. When the agent exits, you're back at your original
+            shell, untouched.
+          </p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="py-16 border-t border-divide">
+      <p class="eyebrow">Features</p>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight">
+        Built for the way you work.
+      </h2>
+      <div class="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2">
+        {features.map((f) => (
+          <div>
+            <p class="font-semibold">{f.title}</p>
+            <p class="mt-2 text-sm text-dim leading-relaxed">{f.body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section id="install" class="py-16 border-t border-divide">
+      <p class="eyebrow">Install</p>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight">
+        Single binary, one command.
+      </h2>
+      <p class="mt-4 text-dim">
+        Prebuilt binaries for macOS (Apple Silicon &amp; Intel) and Linux (x64
+        &amp; arm64). Requires <span class="font-mono">git</span>;
+        <span class="font-mono">git-lfs</span> optional and auto-detected.
+      </p>
+
+      <div class="mt-8 terminal">
+        <div class="terminal-chrome">
+          <span class="terminal-dot"></span>
+          <span class="terminal-dot"></span>
+          <span class="terminal-dot"></span>
+        </div>
+        <pre class="terminal-body"><span class="prompt">$ </span><span class="cmd">curl -fsSL https://clonecode.io/install.sh | sh</span>
+<span class="out">→ resolving latest version</span>
+<span class="out">→ downloading clonecode-aarch64-apple-darwin.tar.gz</span>
+<span class="acc">✓ checksum verified</span>
+<span class="acc">✓ installed clonecode v0.1.0 to ~/.local/bin/clonecode</span></pre>
+      </div>
+
+      <details class="mt-6 group">
+        <summary class="cursor-pointer text-sm text-dim hover:text-accent">
+          Pin a version, change the install dir, or build from source
+        </summary>
+        <div class="mt-4 terminal">
+          <div class="terminal-chrome">
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+          </div>
+          <pre class="terminal-body"><span class="prompt"># pin a version</span>
+<span class="prompt">$ </span><span class="cmd">CLONECODE_VERSION=v0.1.0 curl -fsSL https://clonecode.io/install.sh | sh</span>
+
+<span class="prompt"># custom install dir</span>
+<span class="prompt">$ </span><span class="cmd">CLONECODE_INSTALL_DIR=/usr/local/bin curl -fsSL https://clonecode.io/install.sh | sh</span>
+
+<span class="prompt"># build from source</span>
+<span class="prompt">$ </span><span class="cmd">git clone https://github.com/seansackowitz/clonecode.git</span>
+<span class="prompt">$ </span><span class="cmd">cd clonecode &amp;&amp; cargo build --release</span>
+<span class="prompt">$ </span><span class="cmd">cp target/release/clonecode ~/.local/bin/</span></pre>
+        </div>
+      </details>
+
+      <p class="mt-6 text-sm text-faint">
+        Then run <span class="font-mono">clonecode --help</span> from inside any
+        git repo.
+      </p>
+    </section>
+
+    <footer class="py-12 border-t border-divide flex flex-wrap items-center justify-between gap-4 text-sm text-faint">
+      <p>
+        Built by
+        <a class="underline text-dim" href="https://github.com/seansackowitz">@seansackowitz</a>.
+      </p>
+      <p class="font-mono">
+        <a class="hover:text-accent" href="https://github.com/seansackowitz/clonecode">github</a>
+        <span class="mx-2 text-dim">·</span>
+        <a class="hover:text-accent" href="https://github.com/seansackowitz/clonecode/issues">issues</a>
+      </p>
+    </footer>
+  </main>
+</Layout>
