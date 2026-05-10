@@ -9,6 +9,9 @@
     "preview": "astro preview",
     "start": "serve dist -l tcp://0.0.0.0:${PORT:-4321} --no-clipboard"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "astro": "^5.1.0",
     "@tailwindcss/vite": "^4.0.0",
