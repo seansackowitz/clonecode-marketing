@@ -1,16 +1,16 @@
 # clonecode-marketing
 
-Landing page for [clonecode](https://github.com/seansackowitz/clonecode).
+Landing page for [clonecode](https://github.com/seansackowitz/clonecode), served at <https://clonecode.io>.
 
 ## Stack
 - Astro 5 (static output)
 - Tailwind CSS 4 (via `@tailwindcss/vite`)
-- Deployed to Railway, served by `serve`
+- Hosted on GitHub Pages, deployed via `.github/workflows/deploy.yml` on every push to `main`
 
 ## Develop
 
 ```bash
-bun install        # or npm install / pnpm install
+bun install
 bun run dev        # http://localhost:4321
 ```
 
@@ -21,14 +21,16 @@ bun run build
 bun run preview    # preview the built dist/
 ```
 
-## Deploy (Railway)
+## Deploy
 
-The `start` script serves `dist/` on `$PORT`. Railway will:
+Pushes to `main` trigger the Pages workflow:
 
-1. Run `npm install` (or your detected package manager)
-2. Run `npm run build` (Astro builds to `dist/`)
-3. Run `npm start` (serves `dist/` on Railway's `$PORT`)
+1. `bun install --frozen-lockfile`
+2. `bun run build` → `dist/`
+3. `actions/upload-pages-artifact` + `actions/deploy-pages`
 
-If Railway's auto-detection picks the wrong build, set custom commands in the service settings:
-- Build: `npm run build`
-- Start: `npm start`
+The custom domain is configured both ways:
+- `public/CNAME` (`clonecode.io`) gets copied into `dist/` and tells Pages the domain on each deploy
+- The repo's Pages settings have `clonecode.io` set as the custom domain (one-time `gh api -X PUT` on initial setup)
+
+`public/.nojekyll` keeps Pages from running Jekyll on the Astro output.
